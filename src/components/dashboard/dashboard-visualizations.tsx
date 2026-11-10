@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState, type PointerEvent } from "react";
 import { dailyActivity, dateKey, dayLabel, dayOfYear, filterObservations, monthNames, observations, type DashboardFilters } from "@/components/dashboard/dashboard-data";
 
 export function MonthlySensorChart({ filters, startDate, endDate }: { filters: DashboardFilters; startDate?: string; endDate?: string }) {
@@ -23,6 +23,110 @@ export function MonthlySensorChart({ filters, startDate, endDate }: { filters: D
 }
 
 type DashboardView = "RAW" | "HARMONIZED";
+
+const historicalScenarios = [
+  { year: 2020, scale: 0.72, color: "#8797a8", deviations: { 7: 5 } },
+  { year: 2021, scale: 0.8, color: "#738c73", deviations: { 2: 5, 7: -4 } },
+  { year: 2022, scale: 0.76, color: "#c08752", deviations: { 7: 18 } },
+  { year: 2023, scale: 0.89, color: "#8c78a8", deviations: { 6: 8 } },
+  { year: 2024, scale: 0.94, color: "#4b8c91", deviations: { 7: -12 } },
+  { year: 2025, scale: 1, color: "#bb542e", deviations: { 7: 5 } },
+];
+
+export function HistoricalActivityTrend({ filters }: { filters: DashboardFilters }) {
+  const [hoveredPoint, setHoveredPoint] = useState<{ month: number; year: number } | null>(null);
+  const series = historicalScenarios.map(({ year, scale, color, deviations }) => {
+    const values = monthNames.map((_, month) => {
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      const monthActivity = Array.from({ length: daysInMonth }, (_, day) => (
+        dailyActivity(new Date(year, month, day + 1), filters).activity
+      )).reduce((sum, value) => sum + value, 0) / daysInMonth;
+      return Math.max(0, Math.min(100, Math.round(monthActivity * scale + (deviations[month as keyof typeof deviations] ?? 0))));
+    });
+    const points = values.map((value, month) => ({
+      x: 58 + month * (548 / (monthNames.length - 1)),
+      y: 188 - value * 1.5,
+      value,
+    }));
+    return {
+      year,
+      color,
+      points,
+      path: points.map(({ x, y }, index) => `${index === 0 ? "M" : "L"}${x},${y}`).join(" "),
+    };
+  });
+  const hoveredValues = hoveredPoint ? series.map(({ year, color, points }) => ({
+    year,
+    color,
+    value: points[hoveredPoint.month].value,
+    isActive: year === hoveredPoint.year,
+  })) : [];
+  const hoveredX = hoveredPoint ? series[0].points[hoveredPoint.month].x : null;
+
+  function chooseHoveredPoint(event: PointerEvent<SVGPathElement>, year: number) {
+    const svg = event.currentTarget.ownerSVGElement;
+    if (!svg) return;
+    const bounds = svg.getBoundingClientRect();
+    if (bounds.width === 0) return;
+    const viewBoxX = ((event.clientX - bounds.left) / bounds.width) * 650;
+    const month = Math.max(0, Math.min(monthNames.length - 1, Math.round((viewBoxX - 58) / (548 / (monthNames.length - 1)))));
+    setHoveredPoint({ month, year });
+  }
+
+  return (
+    <div className="historical-trend">
+      <div className="chart-legend historical-trend-legend" aria-label="Years shown">
+        {series.map(({ year, color }) => <span className={hoveredPoint?.year === year ? "is-active" : ""} key={year}><i className="historical-year-swatch" style={{ borderColor: color }} />{year}</span>)}
+      </div>
+      <svg className="chart-svg historical-trend-svg" viewBox="0 0 650 230" role="group" aria-label="Illustrative monthly fire activity index compared across years 2020 to 2025" onPointerLeave={() => setHoveredPoint(null)}>
+        <defs>
+          <linearGradient id="historical-trend-fill" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0%" stopColor="#bb542e" stopOpacity=".2" />
+            <stop offset="100%" stopColor="#bb542e" stopOpacity="0" />
+          </linearGradient>
+        </defs>
+        <rect className="historical-trend-plot" x="48" y="34" width="562" height="154" rx="8" />
+        {[0, 25, 50, 75, 100].map((tick) => {
+          const y = 188 - tick * 1.5;
+          return <g key={tick}><line className="chart-gridline" x1="48" x2="610" y1={y} y2={y} /><text className="chart-axis" x="39" y={y + 3} textAnchor="end">{tick}</text></g>;
+        })}
+        <text className="chart-axis" x="48" y="18">Activity index (0–100)</text>
+        {hoveredX !== null && <line className="historical-trend-cursor" x1={hoveredX} x2={hoveredX} y1="36" y2="188" />}
+        {series.map(({ year, color, points, path }) => (
+          <g className={hoveredPoint ? (hoveredPoint.year === year ? "historical-series is-active" : "historical-series is-muted") : "historical-series"} key={year}>
+            {year === 2025 && <path className="historical-trend-area" d={`${path} L${points[points.length - 1].x},188 L${points[0].x},188 Z`} />}
+            <path d={path} fill="none" stroke={color} strokeLinecap="round" strokeLinejoin="round" strokeWidth={year === 2025 ? 3 : 2} />
+            <path className="historical-trend-hit-area" d={path} onPointerMove={(event) => chooseHoveredPoint(event, year)} />
+            {points.map(({ x, y, value }, month) => <circle
+              aria-label={`${monthNames[month]} ${year}: activity index ${value}`}
+              className={`historical-trend-point${hoveredPoint?.month === month && hoveredPoint.year === year ? " is-active" : ""}`}
+              cx={x}
+              cy={y}
+              data-month={month}
+              fill={color}
+              key={month}
+              onFocus={() => setHoveredPoint({ month, year })}
+              onPointerEnter={() => setHoveredPoint({ month, year })}
+              r={hoveredPoint?.month === month && hoveredPoint.year === year ? 5 : year === 2025 ? 3 : 2.5}
+              tabIndex={0}
+            ><title>{`${monthNames[month]} ${year}: activity index ${value} (illustrative)`}</title></circle>)}
+          </g>
+        ))}
+        {monthNames.map((month, index) => <text className="chart-axis" key={month} x={58 + index * (548 / (monthNames.length - 1))} y="210" textAnchor="middle">{month}</text>)}
+      </svg>
+      <div className="historical-trend-readout" aria-live="polite">
+        {hoveredPoint ? (
+          <>
+            <div className="historical-trend-readout-title"><strong>{monthNames[hoveredPoint.month]}</strong><span>Monthly activity index · illustrative</span></div>
+            <div className="historical-trend-readout-values">
+              {hoveredValues.map(({ year, color, value, isActive }) => <span className={isActive ? "is-active" : ""} key={year}><i style={{ backgroundColor: color }} />{year}<strong>{value}</strong></span>)}
+            </div>
+          </>
+        ) : <span className="historical-trend-hint">Hover over a line or focus a point to compare monthly values.</span>}
+      </div>
+    </div>
+  );
+}
 
 export function CalendarHeatmap({ selectedDate, onSelect, filters, view }: { selectedDate: Date; onSelect: (date: Date) => void; filters: DashboardFilters; view: DashboardView }) {
   const days = useMemo(() => Array.from({ length: 365 }, (_, index) => dailyActivity(new Date(2025, 0, index + 1), filters)), [filters]);

@@ -6,6 +6,7 @@ import { Activity, CalendarDays, ChevronDown, Crosshair, Info, Layers2, MapPin, 
 import {
   CalendarHeatmap,
   FrpChart,
+  HistoricalActivityTrend,
   MonthlySensorChart,
   SeasonalChart,
 } from "@/components/dashboard/dashboard-visualizations";
@@ -125,17 +126,20 @@ export default function DashboardPage() {
             {selectedObservation && <div className="observation-info"><div className="observation-info-top"><div><span className={`sensor-chip ${selectedObservation.sensor.toLowerCase()}`}>{selectedObservation.sensor}</span><span className="observation-satellite">{selectedObservation.satellite} · {selectedObservation.date}</span></div><button aria-label="Close observation details" onClick={() => setSelectedObservation(null)}><X /></button></div><div className="observation-data"><span><small>DATE / TIME</small>{selectedObservation.date} · {selectedObservation.time}</span><span><small>COORDINATES</small>{selectedObservation.lat}, {selectedObservation.lon}</span><span><small>FRP</small>{typeof selectedObservation.frp === "number" ? `${selectedObservation.frp.toLocaleString()} MW` : "Not available"}</span><span><small>CONFIDENCE</small>{selectedObservation.confidence}</span><span><small>FIRE TYPE</small>{selectedObservation.fireType}</span><span><small>DAY / NIGHT</small>{selectedObservation.timeOfDay}</span></div></div>}
           </article>
 
-          <aside className="summary-rail">
-            <article className="panel rail-period"><div className="rail-title"><div><span className="section-kicker">SELECTED PERIOD</span><h2>{periodLabel}</h2></div><CalendarDays /></div><dl className="period-list"><div><dt>Sample detections</dt><dd>{matchingObservations.length}</dd></div><div><dt>MODIS / VIIRS</dt><dd>{modisCount} / {viirsCount}</dd></div><div><dt>Available FRP</dt><dd>{peakFrp === null ? "Not available" : `${formatNumber(meanFrp ?? 0)} / ${formatNumber(peakFrp)} MW`}</dd></div><div><dt>Representation</dt><dd>{view === "RAW" ? "Raw sensor records" : "Illustrative common view"}</dd></div></dl><div className="rail-note"><span>ILLUSTRATIVE DATA</span><p>{fullYearSelected ? `All ${observations.length} static sample records fall within 2025.` : `These counts and FRP values come only from the ${matchingObservations.length} matching static sample records in this period.`}</p></div></article>
-          </aside>
         </section>
 
         <section className="panel calendar-panel"><div className="panel-heading calendar-heading"><div><span className="section-kicker">ANNUAL BURNING ACTIVITY</span><h2>Daily pattern — 2025</h2><p>Select a date. Days without sample records are shown as zero or missing.</p></div><span className="calendar-unit"><Activity />ILLUSTRATIVE SERIES</span></div><CalendarHeatmap selectedDate={selectedDate} filters={filters} view={view} onSelect={chooseDate} /><div className="calendar-foot"><span>365 DAYS · STATIC DEMO DATA</span><span>{matchingObservations.length} mapped records in selected range</span></div></section>
 
+        <section className="panel historical-trend-panel">
+          <div className="panel-heading chart-heading">
+            <div><span className="section-kicker">MULTI-YEAR COMPARISON</span><h2>Historical Activity Trend</h2><p>Monthly activity patterns across 2020–2025. Illustrative synthetic index, not historical satellite observations.</p></div>
+          </div>
+          <HistoricalActivityTrend filters={filters} />
+        </section>
+
         <section className="analysis-section"><div className="analysis-intro"><div><span className="section-kicker">ANALYSIS</span><h2>Detection patterns</h2></div><span className="analysis-demo"><span />SYNTHETIC SERIES</span></div><div className="analysis-grid">
           <article className="panel chart-panel"><div className="panel-heading chart-heading"><div><span className="section-kicker">SENSOR COMPARISON</span><h3>Monthly MODIS vs VIIRS detections</h3><p>Sample records available only in March</p></div></div><div className="chart-legend"><span><i className="legend-line observed-line" />MODIS</span><span><i className="legend-line baseline-line" />VIIRS</span></div><MonthlySensorChart filters={filters} startDate={startDate} endDate={endDate} /></article>
-          <article className="panel chart-panel"><div className="panel-heading chart-heading"><div><span className="section-kicker">ILLUSTRATIVE CONTEXT</span><h3>Activity vs seasonal baseline</h3><p>Deterministic synthetic index; not historical observations</p></div></div><div className="chart-legend"><span><i className="legend-line observed-line" />ILLUSTRATIVE ACTIVITY</span><span><i className="legend-line baseline-line" />SEASONAL BASELINE</span></div><SeasonalChart selectedDate={selectedDate} activity={view === "RAW" ? matchingObservations.length : Math.min(100, matchingObservations.length * 5)} anomaly={view === "RAW" ? 0 : 42} view={view} /></article>
-          <article className="panel chart-panel"><div className="panel-heading chart-heading"><div><span className="section-kicker">THERMAL INTENSITY</span><h3>Daily peak FRP</h3><p>{dayLabel(selectedDate)} · MW</p></div></div><div className="chart-legend"><span><i className="legend-line observed-line" />Available sample peak</span></div><FrpChart selectedDate={selectedDate} filters={filters} startDate={startDate} endDate={endDate} /></article>
+
         </div></section>
       </div>
     </main>
