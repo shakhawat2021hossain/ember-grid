@@ -1,5 +1,26 @@
 import { useMemo } from "react";
-import { dailyActivity, dateKey, dayLabel, dayOfYear, monthNames, type DashboardFilters } from "@/components/dashboard/dashboard-data";
+import { dailyActivity, dateKey, dayLabel, dayOfYear, filterObservations, monthNames, observations, type DashboardFilters } from "@/components/dashboard/dashboard-data";
+
+export function MonthlySensorChart({ filters, startDate, endDate }: { filters: DashboardFilters; startDate?: string; endDate?: string }) {
+  const records = filterObservations(observations, filters, undefined, !startDate && !endDate, startDate, endDate);
+  const modis = records.filter((item) => item.sensor === "MODIS").length;
+  const viirs = records.filter((item) => item.sensor === "VIIRS").length;
+  const max = Math.max(1, modis, viirs);
+  const x = 70;
+  return (
+    <svg className="chart-svg" viewBox="0 0 650 230" role="img" aria-label="Sample detection counts for the selected period">
+      {[0, 1, 2, 3, 4].map((tick) => <g key={tick}><line className="chart-gridline" x1="42" x2="604" y1={180 - tick * 38} y2={180 - tick * 38} /><text className="chart-axis" x="32" y={184 - tick * 38} textAnchor="end">{Math.round(max * tick / 4)}</text></g>)}
+      <rect x={x} y={180 - (modis / max) * 152} width="74" height={(modis / max) * 152} rx="5" className="chart-observed-bar" />
+      <rect x={x + 94} y={180 - (viirs / max) * 152} width="74" height={(viirs / max) * 152} rx="5" className="chart-baseline-bar" />
+      <text className="chart-axis" x={x + 37} y="205" textAnchor="middle">MODIS · {modis}</text>
+      <text className="chart-axis" x={x + 131} y="205" textAnchor="middle">VIIRS · {viirs}</text>
+      <text className="chart-axis" x="610" y="205" textAnchor="end">SELECTED PERIOD</text>
+      <text className="chart-axis" x="42" y="18">Sample detections</text>
+      <rect x={470} y="44" width="12" height="12" className="chart-observed-bar" /><text className="chart-axis" x="490" y="54">MODIS</text>
+      <rect x={470} y="64" width="12" height="12" className="chart-baseline-bar" /><text className="chart-axis" x="490" y="74">VIIRS</text>
+    </svg>
+  );
+}
 
 type DashboardView = "RAW" | "HARMONIZED";
 
@@ -13,7 +34,7 @@ export function CalendarHeatmap({ selectedDate, onSelect, filters, view }: { sel
       <div className="calendar-months" aria-hidden="true">
         {monthStarts.map(({ month, week }) => <span key={month} style={{ left: `${(week / 53) * 100}%` }}>{month}</span>)}
       </div>
-      <div className="calendar-grid" role="group" aria-label="Daily burning activity during 2025">
+      <div className="calendar-grid" role="group" aria-label="Daily fire detections during 2025">
         {Array.from({ length: firstOffset }, (_, index) => <span aria-hidden="true" className="calendar-blank" key={`blank-${index}`} />)}
         {days.map((day, index) => {
           const intensityValue = view === "RAW" ? day.observations / 4.3 : day.activity;
@@ -53,7 +74,7 @@ export function SeasonalChart({ selectedDate, activity, anomaly, view }: { selec
   const range = `${points.map((point, index) => `${index === 0 ? "M" : "L"}${x(index)},${y(point.baseline + 11)}`).join(" ")} ${points.slice().reverse().map((point, reverseIndex) => { const index = points.length - 1 - reverseIndex; return `L${x(index)},${y(point.baseline - 11)}`; }).join(" ")} Z`;
   const expectedBoundary = selectedActivity > selectedBaseline + 11 ? selectedBaseline + 11 : selectedActivity < selectedBaseline - 11 ? selectedBaseline - 11 : null;
   return (
-    <svg className="chart-svg" viewBox="0 0 650 230" role="img" aria-label="Monthly burning activity compared to historical seasonal baseline">
+    <svg className="chart-svg" viewBox="0 0 650 230" role="img" aria-label="Monthly fire activity compared with historical seasonal baseline">
       {[20, 60, 100, 140, 180].map((lineY) => <g key={lineY}><line className="chart-gridline" x1="42" x2="604" y1={lineY} y2={lineY} /><text className="chart-axis" x="30" y={lineY + 3} textAnchor="end">{Math.round((180 - lineY) / 1.55)}</text></g>)}
       <path className="chart-range" d={range} />
       {expectedBoundary !== null && <rect className="chart-anomaly-region" x={x(selectedMonth) - 5} y={Math.min(y(selectedActivity), y(expectedBoundary))} width="10" height={Math.max(2, Math.abs(y(selectedActivity) - y(expectedBoundary)))} />}
@@ -65,20 +86,35 @@ export function SeasonalChart({ selectedDate, activity, anomaly, view }: { selec
   );
 }
 
-export function FrpChart({ selectedDate, filters }: { selectedDate: Date; filters: DashboardFilters }) {
+export function FrpChart({ selectedDate, filters, startDate, endDate }: { selectedDate: Date; filters: DashboardFilters; startDate?: string; endDate?: string }) {
+  const records = filterObservations(observations, filters, startDate || endDate ? undefined : selectedDate, false, startDate, endDate);
+  const peakByDate = new Map<string, number>();
+  records.forEach((record) => {
+    const frp = Number(record.frp);
+    if (!Number.isNaN(frp)) peakByDate.set(record.date, Math.max(peakByDate.get(record.date) ?? 0, frp));
+  });
   const daysInMonth = new Date(2025, selectedDate.getMonth() + 1, 0).getDate();
-  const values = Array.from({ length: daysInMonth }, (_, index) => dailyActivity(new Date(2025, selectedDate.getMonth(), index + 1), filters).frp);
-  const selectedIndex = selectedDate.getDate() - 1;
+  const values = Array.from({ length: daysInMonth }, (_, index) => {
+    const date = `${String(index + 1).padStart(2, "0")} ${monthNames[selectedDate.getMonth()]} 2025`;
+    return peakByDate.get(date) ?? null;
+  });
+  const available = values.filter((value): value is number => value !== null);
+  const maximum = Math.max(100, ...available);
   const x = (index: number) => 42 + index * (562 / Math.max(1, values.length - 1));
-  const y = (value: number) => 175 - (value / 10) * 1.17;
-  const path = values.map((value, index) => `${index === 0 ? "M" : "L"}${x(index)},${y(value)}`).join(" ");
-  const area = `${path} L${x(values.length - 1)},178 L${x(0)},178 Z`;
+  const y = (value: number) => 178 - value / maximum * 150;
+  const selectedIndex = selectedDate.getDate() - 1;
+  const lineSegments = values.slice(0, -1).map((value, index) => {
+    const next = values[index + 1];
+    return value !== null && next !== null ? <line key={index} className="frp-line" x1={x(index)} y1={y(value)} x2={x(index + 1)} y2={y(next)} /> : null;
+  });
   return (
-    <svg className="chart-svg" viewBox="0 0 650 230" role="img" aria-label="Daily fire radiative power during March 2025">
-      {[40, 80, 120, 160].map((lineY) => <g key={lineY}><line className="chart-gridline" x1="42" x2="604" y1={lineY} y2={lineY} /><text className="chart-axis" x="30" y={lineY + 3} textAnchor="end">{Math.round((178 - lineY) * 10 / 1.17)}</text></g>)}
-      <path className="frp-area" d={area} /><path className="frp-line" d={path} />
-      {values.map((value, index) => <circle className={index === selectedIndex ? "frp-point frp-point-selected" : "frp-point"} cx={x(index)} cy={y(value)} key={index} r={index === selectedIndex ? "4" : "2"} aria-label={`${index + 1} ${monthNames[selectedDate.getMonth()]} 2025: ${value} MW`}><title>{`${index + 1} ${monthNames[selectedDate.getMonth()]} 2025 · ${value} MW${index === selectedIndex ? " · selected date" : ""}`}</title></circle>)}
-      {[1, 8, 15, 22, 29].filter((day) => day <= daysInMonth).map((day) => <text className="chart-axis" key={day} x={x(day - 1)} y="204" textAnchor="middle">{String(day).padStart(2, "0")} {monthNames[selectedDate.getMonth()]}</text>)}
+    <svg className="chart-svg" viewBox="0 0 650 230" role="img" aria-label="Daily peak fire radiative power from available sample records">
+      {[0, 0.25, 0.5, 0.75, 1].map((fraction) => <g key={fraction}><line className="chart-gridline" x1="42" x2="604" y1={178 - fraction * 150} y2={178 - fraction * 150} /><text className="chart-axis" x="30" y={181 - fraction * 150} textAnchor="end">{Math.round(maximum * fraction)}</text></g>)}
+      {lineSegments}
+      {values.map((value, index) => value !== null ? <circle className={index === selectedIndex ? "frp-point frp-point-selected" : "frp-point"} cx={x(index)} cy={y(value)} key={index} r={index === selectedIndex ? "5" : "3"}><title>{`${index + 1} ${monthNames[selectedDate.getMonth()]} 2025 · peak ${value} MW`}</title></circle> : null)}
+      {[1, 8, 15, 22, 29].filter((day) => day <= daysInMonth).map((day) => <text className="chart-axis" key={day} x={x(day - 1)} y="204" textAnchor="middle">{String(day).padStart(2, "0")}</text>)}
+      <text className="chart-axis" x="604" y="204" textAnchor="end">{monthNames[selectedDate.getMonth()].toUpperCase()} 2025</text>
+      {available.length === 0 && <text className="chart-axis" x="320" y="115" textAnchor="middle">No FRP records match the current filters</text>}
     </svg>
   );
 }
