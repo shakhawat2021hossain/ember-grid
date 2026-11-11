@@ -58,6 +58,22 @@ const observationRecords: Omit<Observation, "confidenceLevel" | "timeOfDay" | "f
 
 export const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
+type HistoricalYearProfile = {
+  year: number;
+  scale: number;
+  color: string;
+  deviations: Partial<Record<number, number>>;
+};
+
+export const historicalYearProfiles: HistoricalYearProfile[] = [
+  { year: 2020, scale: 0.72, color: "#8797a8", deviations: { 7: 5 } },
+  { year: 2021, scale: 0.8, color: "#738c73", deviations: { 2: 5, 7: -4 } },
+  { year: 2022, scale: 0.76, color: "#c08752", deviations: { 7: 18 } },
+  { year: 2023, scale: 0.89, color: "#8c78a8", deviations: { 6: 8 } },
+  { year: 2024, scale: 0.94, color: "#4b8c91", deviations: { 7: -12 } },
+  { year: 2025, scale: 1, color: "#bb542e", deviations: { 7: 5 } },
+];
+
 const generatedObservationDate = (index: number) => {
   const dayOffset = 3 + index * 2;
   const date = new Date(Date.UTC(2025, 0, dayOffset));
@@ -158,6 +174,21 @@ export function dailyActivity(date: Date, filters?: DashboardFilters) {
     meanFrp: observationsCount ? Math.max(0, Math.round(frp / Math.max(1, observationsCount / 38))) : 0,
     frp,
     anomaly,
+  };
+}
+
+export function monthlyActivitySummary(year: number, month: number, filters: DashboardFilters) {
+  const profile = historicalYearProfiles.find((item) => item.year === year);
+  if (!profile) throw new RangeError(`No historical activity profile for ${year}.`);
+
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const days = Array.from({ length: daysInMonth }, (_, index) => dailyActivity(new Date(year, month, index + 1), filters));
+  const meanActivity = days.reduce((sum, day) => sum + day.activity, 0) / days.length;
+  const observationsCount = days.reduce((sum, day) => sum + Math.round(day.observations * profile.scale), 0);
+
+  return {
+    activity: Math.max(0, Math.min(100, Math.round(meanActivity * profile.scale + (profile.deviations[month] ?? 0)))),
+    observations: observationsCount,
   };
 }
 

@@ -1,5 +1,5 @@
 import { useMemo, useState, type PointerEvent } from "react";
-import { dailyActivity, dateKey, dayLabel, dayOfYear, filterObservations, monthNames, observations, type DashboardFilters } from "@/components/dashboard/dashboard-data";
+import { dailyActivity, dateKey, dayLabel, dayOfYear, filterObservations, historicalYearProfiles, monthNames, monthlyActivitySummary, observations, type DashboardFilters } from "@/components/dashboard/dashboard-data";
 
 export function MonthlySensorChart({ filters, startDate, endDate }: { filters: DashboardFilters; startDate?: string; endDate?: string }) {
   const records = filterObservations(observations, filters, undefined, !startDate && !endDate, startDate, endDate);
@@ -24,25 +24,10 @@ export function MonthlySensorChart({ filters, startDate, endDate }: { filters: D
 
 type DashboardView = "RAW" | "HARMONIZED";
 
-const historicalScenarios = [
-  { year: 2020, scale: 0.72, color: "#8797a8", deviations: { 7: 5 } },
-  { year: 2021, scale: 0.8, color: "#738c73", deviations: { 2: 5, 7: -4 } },
-  { year: 2022, scale: 0.76, color: "#c08752", deviations: { 7: 18 } },
-  { year: 2023, scale: 0.89, color: "#8c78a8", deviations: { 6: 8 } },
-  { year: 2024, scale: 0.94, color: "#4b8c91", deviations: { 7: -12 } },
-  { year: 2025, scale: 1, color: "#bb542e", deviations: { 7: 5 } },
-];
-
 export function HistoricalActivityTrend({ filters }: { filters: DashboardFilters }) {
   const [hoveredPoint, setHoveredPoint] = useState<{ month: number; year: number } | null>(null);
-  const series = historicalScenarios.map(({ year, scale, color, deviations }) => {
-    const values = monthNames.map((_, month) => {
-      const daysInMonth = new Date(year, month + 1, 0).getDate();
-      const monthActivity = Array.from({ length: daysInMonth }, (_, day) => (
-        dailyActivity(new Date(year, month, day + 1), filters).activity
-      )).reduce((sum, value) => sum + value, 0) / daysInMonth;
-      return Math.max(0, Math.min(100, Math.round(monthActivity * scale + (deviations[month as keyof typeof deviations] ?? 0))));
-    });
+  const series = historicalYearProfiles.map(({ year, color }) => {
+    const values = monthNames.map((_, month) => monthlyActivitySummary(year, month, filters).activity);
     const points = values.map((value, month) => ({
       x: 58 + month * (548 / (monthNames.length - 1)),
       y: 188 - value * 1.5,
@@ -128,17 +113,17 @@ export function HistoricalActivityTrend({ filters }: { filters: DashboardFilters
   );
 }
 
-export function CalendarHeatmap({ selectedDate, onSelect, filters, view }: { selectedDate: Date; onSelect: (date: Date) => void; filters: DashboardFilters; view: DashboardView }) {
-  const days = useMemo(() => Array.from({ length: 365 }, (_, index) => dailyActivity(new Date(2025, 0, index + 1), filters)), [filters]);
-  const firstOffset = new Date(2025, 0, 1).getDay();
-  const monthStarts = monthNames.map((month, index) => ({ month, week: Math.floor((firstOffset + dayOfYear(new Date(2025, index, 1)) - 1) / 7) }));
+export function CalendarHeatmap({ selectedDate, onSelect, filters, view, year = 2025 }: { selectedDate: Date; onSelect: (date: Date) => void; filters: DashboardFilters; view: DashboardView; year?: number }) {
+  const days = useMemo(() => Array.from({ length: dayOfYear(new Date(year, 11, 31)) }, (_, index) => dailyActivity(new Date(year, 0, index + 1), filters)), [filters, year]);
+  const firstOffset = new Date(year, 0, 1).getDay();
+  const monthStarts = monthNames.map((month, index) => ({ month, week: Math.floor((firstOffset + dayOfYear(new Date(year, index, 1)) - 1) / 7) }));
 
   return (
     <div className="calendar-wrap">
       <div className="calendar-months" aria-hidden="true">
         {monthStarts.map(({ month, week }) => <span key={month} style={{ left: `${(week / 53) * 100}%` }}>{month}</span>)}
       </div>
-      <div className="calendar-grid" role="group" aria-label="Daily fire detections during 2025">
+      <div className="calendar-grid" role="group" aria-label={`Daily fire activity during ${year}`}>
         {Array.from({ length: firstOffset }, (_, index) => <span aria-hidden="true" className="calendar-blank" key={`blank-${index}`} />)}
         {days.map((day, index) => {
           const intensityValue = view === "RAW" ? day.observations / 4.3 : day.activity;

@@ -130,17 +130,8 @@ export default function DashboardPage() {
 
         <section className="panel calendar-panel"><div className="panel-heading calendar-heading"><div><span className="section-kicker">ANNUAL BURNING ACTIVITY</span><h2>Daily pattern — 2025</h2><p>Select a date. Days without sample records are shown as zero or missing.</p></div><span className="calendar-unit"><Activity />ILLUSTRATIVE SERIES</span></div><CalendarHeatmap selectedDate={selectedDate} filters={filters} view={view} onSelect={chooseDate} /><div className="calendar-foot"><span>365 DAYS · STATIC DEMO DATA</span><span>{matchingObservations.length} mapped records in selected range</span></div></section>
 
-        <section className="panel historical-trend-panel">
-          <div className="panel-heading chart-heading">
-            <div><span className="section-kicker">MULTI-YEAR COMPARISON</span><h2>Historical Activity Trend</h2><p>Monthly activity patterns across 2020–2025. Illustrative synthetic index, not historical satellite observations.</p></div>
-          </div>
-          <HistoricalActivityTrend filters={filters} />
-        </section>
 
-        <section className="analysis-section"><div className="analysis-intro"><div><span className="section-kicker">ANALYSIS</span><h2>Detection patterns</h2></div><span className="analysis-demo"><span />SYNTHETIC SERIES</span></div><div className="analysis-grid">
-          <article className="panel chart-panel"><div className="panel-heading chart-heading"><div><span className="section-kicker">SENSOR COMPARISON</span><h3>Monthly MODIS vs VIIRS detections</h3><p>Sample records available only in March</p></div></div><div className="chart-legend"><span><i className="legend-line observed-line" />MODIS</span><span><i className="legend-line baseline-line" />VIIRS</span></div><MonthlySensorChart filters={filters} startDate={startDate} endDate={endDate} /></article>
-
-        </div></section>
+        
       </div>
     </main>
   );

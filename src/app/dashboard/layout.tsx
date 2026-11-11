@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { FileText, LayoutDashboard, TriangleAlert } from "lucide-react";
+import { BarChart3, CalendarDays, FileText, LayoutDashboard, TriangleAlert } from "lucide-react";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -10,6 +10,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     ? { kicker: "RISK MONITOR", title: "Fire Insights & Alerts" }
     : pathname.startsWith("/dashboard/reports")
       ? { kicker: "DATA PRODUCTS", title: "Reports" }
+      : pathname.startsWith("/dashboard/analytics")
+        ? { kicker: "FIRE ANALYTICS", title: "Analytics" }
+      : pathname.startsWith("/dashboard/fire-calendar")
+        ? { kicker: "ACTIVITY HISTORY", title: "Fire Calendar" }
       : { kicker: "OBSERVATION SYSTEM", title: "Active Fire Dashboard" };
 
   return (
@@ -22,7 +26,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <nav className="dashboard-nav" aria-label="Main navigation">
           <span className="sidebar-section-label">MONITORING</span>
           <Link className={pathname === "/dashboard" ? "nav-active" : ""} aria-current={pathname === "/dashboard" ? "page" : undefined} href="/dashboard"><LayoutDashboard aria-hidden="true" /><span>Dashboard</span></Link>
+          <Link className={pathname.startsWith("/dashboard/fire-calendar") ? "nav-active" : ""} aria-current={pathname.startsWith("/dashboard/fire-calendar") ? "page" : undefined} href="/dashboard/fire-calendar"><CalendarDays aria-hidden="true" /><span>Fire Calendar</span></Link>
           <Link className={pathname.startsWith("/dashboard/insights") ? "nav-active" : ""} aria-current={pathname.startsWith("/dashboard/insights") ? "page" : undefined} href="/dashboard/insights"><TriangleAlert aria-hidden="true" /><span>Fire Insights &amp; Alerts</span></Link>
+          <Link className={pathname.startsWith("/dashboard/analytics") ? "nav-active" : ""} aria-current={pathname.startsWith("/dashboard/analytics") ? "page" : undefined} href="/dashboard/analytics"><BarChart3 aria-hidden="true" /><span>Analytics</span></Link>
           <Link className={pathname.startsWith("/dashboard/reports") ? "nav-active" : ""} aria-current={pathname.startsWith("/dashboard/reports") ? "page" : undefined} href="/dashboard/reports"><FileText aria-hidden="true" /><span>Reports</span></Link>
           {/* <Link href="/dashboard#methods"><ShieldCheck aria-hidden="true" /><span>Methods &amp; Provenance</span></Link> */}
         </nav>

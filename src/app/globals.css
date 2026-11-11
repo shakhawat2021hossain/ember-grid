@@ -513,6 +513,19 @@
 .historical-trend-readout-values > span.is-active { border-color: #e6e1d8; background: #f8f6f1; color: #343832; }
 .historical-trend-readout-values i { width: 6px; height: 6px; flex: none; border-radius: 50%; }
 .historical-trend-readout-values strong { margin-left: auto; color: #30342e; font-size: 9px; }
+.fire-calendar-daily .calendar-wrap { width: 100%; }
+.fire-calendar-daily .calendar-grid { grid-auto-columns: minmax(0,1fr); min-height: 0; gap: 5px 4px; }
+.fire-calendar-daily .calendar-day,.fire-calendar-daily .calendar-blank { aspect-ratio: 1; height: auto; min-height: 0; }
+.fire-calendar-year-nav { display: flex; flex: none; align-items: center; gap: 8px; }
+.fire-calendar-year-nav > button { display: grid; width: 28px; height: 28px; place-items: center; border: 1px solid #e5e6df; border-radius: 3px; background: #fff; color: #555b52; cursor: pointer; }
+.fire-calendar-year-nav > button:hover:not(:disabled) { border-color: #bd7958; color: #8b3c1f; }
+.fire-calendar-year-nav > button:disabled { cursor: not-allowed; opacity: .4; }
+.fire-calendar-year-nav > button svg { width: 15px; height: 15px; }
+.fire-calendar-year-nav > strong { min-width: 34px; color: #343831; font-size: 12px; text-align: center; }
+.fire-calendar-year-nav .calendar-unit { margin-left: 5px; }
+.fire-calendar-selection { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 18px; border-top: 1px solid #edeee8; margin-top: 11px; padding: 10px 2px 0; color: #777c73; font-size: 10px; }
+.fire-calendar-selection strong { color: #343831; font-size: 11px; }
+.fire-calendar-data-note { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 12px; margin: 12px 2px 0; color: #777c73; font-size: 9px; line-height: 1.5; }
 @media (max-width: 760px) {
   .historical-trend-panel { padding: 14px 12px 11px; }
   .historical-trend-readout { align-items: flex-start; flex-direction: column; gap: 8px; }
@@ -1263,6 +1276,116 @@
 .report-observation-table { white-space: nowrap; }
 .report-empty { border-top: 1px solid #e8e9e3; padding: 28px 10px; color: #777c74; text-align: center; }
 .report-calendar-panel { margin-top: 15px; padding: 15px 16px; }
+.analytics-history-panel,.analytics-trend-panel { margin-top: 15px; padding: 16px; }
+.analytics-history-grid { display: grid; grid-template-columns: repeat(6,minmax(0,1fr)); gap: 8px; margin-top: 18px; }
+.analytics-history-year { min-width: 0; border: 1px solid #e8e9e3; background: #fcfcfa; padding: 11px 10px 10px; }
+.analytics-history-year.is-selected { border-color: #e6b29a; background: #fdf8f5; }
+.analytics-history-year > span,.analytics-history-year > small { display: block; color: #858a81; font-family: var(--font-geist-mono),monospace; font-size: 8px; }
+.analytics-history-year > strong { display: block; margin: 8px 0 2px; color: #343832; font-size: 21px; font-weight: 560; }
+.analytics-history-track { height: 4px; overflow: hidden; margin-top: 10px; background: #efefe9; }
+.analytics-history-track i { display: block; height: 100%; background: #bf552e; }
+.analytics-filter-note { align-self: center; color: #777c74; font-size: 10px; }
+.analytics-trend-panel .panel-heading > svg,.analytics-detail-panel .panel-heading > svg { width: 17px; height: 17px; flex: none; color: #a0a49b; }
+.analytics-detail-grid { display: grid; grid-template-columns: minmax(0,1.15fr) minmax(300px,.85fr); gap: 14px; margin-top: 15px; }
+.analytics-detail-panel { min-width: 0; padding: 16px; }
+.analytics-anomaly-summary { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 8px; margin-top: 17px; }
+.analytics-anomaly-summary > div { min-width: 0; border: 1px solid #e8e9e3; padding: 10px; }
+.analytics-anomaly-summary small { display: block; color: #858a81; font-size: 8px; }
+.analytics-anomaly-summary strong { display: block; margin-top: 5px; color: #343832; font-size: 18px; font-weight: 560; }
+.analytics-anomaly-summary strong em { color: #777c74; font-size: 9px; font-style: normal; font-weight: 400; }
+.analytics-anomaly-summary .analytics-positive { color: #a34424; }
+.analytics-anomaly-summary .analytics-negative { color: #567348; }
+.analytics-detail-panel > .chart-legend { margin-top: 14px; }
+.analytics-detail-panel .chart-svg { margin-top: 5px; }
+.analytics-note { display: flex; align-items: flex-start; gap: 6px; margin: 10px 0 0; color: #777c74; font-size: 9px; line-height: 1.45; }
+.analytics-note svg { width: 12px; height: 12px; flex: none; color: #92968e; }
+.analytics-sensor-panel .insights-disagreement { margin-top: 4px; }
+.analytics-disclaimer { margin: 13px 0 0; color: #777c74; font-size: 9px; line-height: 1.5; }
 @media (max-width: 900px) {
   .insights-controls,.insights-primary-grid { grid-template-columns: 1fr; }
+  .analytics-detail-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 640px) {
+  .analytics-history-grid { grid-template-columns: repeat(3,minmax(0,1fr)); }
+  .analytics-anomaly-summary { grid-template-columns: 1fr; }
+  .analytics-history-panel,.analytics-trend-panel,.analytics-detail-panel { padding: 14px 12px; }
+}
+.analytics-controls { grid-template-columns: minmax(190px,1fr) minmax(220px,1.1fr) minmax(150px,.8fr); }
+.analytics-current-panel,.analytics-month-panel,.analytics-season-panel { margin-top: 15px; padding: 16px; }
+.analytics-current-content { display: grid; grid-template-columns: minmax(210px,.7fr) minmax(0,1.5fr); gap: 14px; margin-top: 16px; }
+.analytics-index-card { display: flex; min-height: 164px; flex-direction: column; justify-content: center; border: 1px solid #e8e9e3; background: #fcfcfa; padding: 16px; }
+.analytics-index-card > span,.analytics-current-metrics article > span,.analytics-month-metrics article > span { color: #858a81; font-size: 8px; }
+.analytics-index-card > strong { display: block; margin-top: 12px; color: #343832; font-size: 43px; font-weight: 560; line-height: 1; }
+.analytics-index-card > strong em,.analytics-month-metrics article > strong em { color: #777c74; font-size: 11px; font-style: normal; font-weight: 400; }
+.analytics-index-track,.analytics-year-bar-track { height: 7px; overflow: hidden; background: #efefe9; }
+.analytics-index-track { margin-top: 14px; }
+.analytics-index-track i,.analytics-year-bar-track i { display: block; height: 100%; background: #bf552e; }
+.analytics-index-card > small { margin-top: 13px; color: #777c74; font-size: 9px; }
+.analytics-index-card > small b { color: #343832; font-weight: 600; }
+.analytics-index-empty { margin: 14px 0 0; color: #777c74; font-size: 10px; }
+.analytics-risk-badge { flex: none; border: 1px solid; padding: 6px 9px; font-size: 9px; font-weight: 650; white-space: nowrap; }
+.risk-very-low { border-color: #cbd9c7; background: #f0f5ee; color: #526a4c; }
+.risk-low { border-color: #d7dfc2; background: #f5f7ed; color: #687645; }
+.risk-moderate { border-color: #e6d9aa; background: #faf6e9; color: #88722e; }
+.risk-high { border-color: #e6c6a9; background: #fbf1e8; color: #a45b2e; }
+.risk-very-high { border-color: #e5b3a5; background: #fcf0ed; color: #a7412d; }
+.analytics-current-metrics { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); border: 1px solid #e8e9e3; }
+.analytics-current-metrics article { min-width: 0; padding: 13px; }
+.analytics-current-metrics article:nth-child(even) { border-left: 1px solid #e8e9e3; }
+.analytics-current-metrics article:nth-child(n+3) { border-top: 1px solid #e8e9e3; }
+.analytics-current-metrics article > strong { display: block; margin-top: 6px; color: #343832; font-size: 20px; font-weight: 560; }
+.analytics-current-metrics article > small,.analytics-month-metrics article > small { display: block; margin-top: 4px; color: #777c74; font-size: 9px; line-height: 1.4; }
+.analytics-current-panel > .analytics-note,.analytics-month-panel > .analytics-note,.analytics-season-panel > .analytics-note { margin-top: 12px; }
+.analytics-month-metrics { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); border: 1px solid #e8e9e3; margin-top: 16px; }
+.analytics-month-metrics article { min-width: 0; padding: 12px; }
+.analytics-month-metrics article + article { border-left: 1px solid #e8e9e3; }
+.analytics-month-metrics article > strong { display: block; margin-top: 6px; color: #343832; font-size: 20px; font-weight: 560; }
+.analytics-month-metrics article > .analytics-positive { color: #a34424; }
+.analytics-month-metrics article > .analytics-negative { color: #567348; }
+.analytics-year-chart { display: grid; gap: 7px; margin-top: 15px; }
+.analytics-year-bar-row { display: grid; grid-template-columns: 37px minmax(60px,1fr) 80px 64px; align-items: center; gap: 9px; color: #777c74; font-family: var(--font-geist-mono),monospace; font-size: 9px; }
+.analytics-year-bar-row > span { color: #63685f; }
+.analytics-year-bar-row > strong { color: #343832; font-size: 9px; font-weight: 550; text-align: right; }
+.analytics-year-bar-row > small { color: #858a81; font-size: 8px; text-align: right; }
+.analytics-year-bar-track { height: 9px; }
+.analytics-year-bar-row.is-selected .analytics-year-bar-track i { background: #9c4425; }
+.analytics-year-bar-row.is-selected > span { color: #9c4425; font-weight: 650; }
+.analytics-season-wrap { overflow-x: auto; margin-top: 15px; padding-bottom: 4px; }
+.analytics-season-labels,.analytics-season-row { display: grid; grid-template-columns: 50px repeat(12,minmax(37px,1fr)); align-items: center; gap: 5px; min-width: 640px; }
+.analytics-season-labels { margin-bottom: 6px; color: #858a81; font-family: var(--font-geist-mono),monospace; font-size: 8px; text-align: center; }
+.analytics-season-labels > span:first-child { text-align: left; }
+.analytics-season-row + .analytics-season-row { margin-top: 5px; }
+.analytics-season-row > strong { color: #63685f; font-family: var(--font-geist-mono),monospace; font-size: 9px; font-weight: 550; }
+.analytics-season-cell { min-width: 0; aspect-ratio: 1.5; border: 1px solid transparent; border-radius: 2px; color: #444941; font-family: var(--font-geist-mono),monospace; font-size: 9px; cursor: pointer; }
+.analytics-season-cell:hover { border-color: #777c74; }
+.analytics-season-cell.is-selected { outline: 2px solid #343832; outline-offset: 1px; }
+.heat-very-low { background: #f0f3ed; }
+.heat-low { background: #dfe8d8; }
+.heat-moderate { background: #ecdfb5; }
+.heat-high { background: #e7c39f; }
+.heat-very-high { background: #d88968; color: #fff; }
+.analytics-season-legend { display: flex; align-items: center; gap: 5px; margin-top: 12px; color: #777c74; font-size: 8px; }
+.analytics-season-legend i { width: 15px; height: 9px; border-radius: 1px; }
+.analytics-season-legend span:last-child { margin-left: 2px; }
+.analytics-high-months { display: flex; flex-wrap: wrap; align-items: center; gap: 7px; border-top: 1px solid #e8e9e3; margin-top: 13px; padding-top: 12px; }
+.analytics-high-months > strong { margin-right: 3px; color: #777c74; font-size: 9px; font-weight: 550; }
+.analytics-high-months > button { border: 1px solid #e7e8e2; background: #fcfcfa; color: #343832; padding: 5px 7px; font-size: 9px; cursor: pointer; }
+.analytics-high-months > button:hover { border-color: #d0a18a; background: #fdf8f5; }
+.analytics-high-months > button span { color: #777c74; }
+@media (max-width: 900px) {
+  .analytics-controls { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .analytics-controls .filter-select { grid-column: 1 / -1; }
+  .analytics-current-content { grid-template-columns: 1fr; }
+}
+@media (max-width: 640px) {
+  .analytics-controls { grid-template-columns: 1fr; }
+  .analytics-controls .filter-select { grid-column: auto; }
+  .analytics-month-metrics { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .analytics-month-metrics article:nth-child(3) { border-left: 0; border-top: 1px solid #e8e9e3; }
+  .analytics-month-metrics article:nth-child(4) { border-top: 1px solid #e8e9e3; }
+  .analytics-current-panel,.analytics-month-panel,.analytics-season-panel { padding: 14px 12px; }
+  .analytics-current-panel .panel-heading,.analytics-month-panel .panel-heading,.analytics-season-panel .panel-heading { align-items: flex-start; }
+  .analytics-risk-badge { font-size: 8px; }
+  .analytics-year-bar-row { grid-template-columns: 32px minmax(40px,1fr) 65px 52px; gap: 6px; font-size: 8px; }
+  .analytics-year-bar-row > small,.analytics-year-bar-row > strong { font-size: 8px; }
 }

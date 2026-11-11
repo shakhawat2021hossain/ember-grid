@@ -1,5 +1,6 @@
-import { ArrowRight, CalendarDays, Satellite, SlidersHorizontal, Timer, Waypoints } from "lucide-react";
+import { ArrowRight, CalendarDays, SlidersHorizontal, Timer } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import SubscribeDialog from "@/components/subscribe-dialog";
 
 export default function Home() {
   return (
@@ -39,7 +40,7 @@ export default function Home() {
                   MODIS and VIIRS observe fire at different spatial scales, making direct comparison difficult. This prototype explores a common burning-activity view with seasonal context; all displayed observations are static demonstration data.
                 </p>
               </div>
-              <div className="relative z-10 mt-7 flex flex-wrap items-center justify-between gap-4 border-t border-line/70 pt-5">
+              <div className="relative z-10 mt-7 flex flex-wrap items-center justify-start gap-3 border-t border-line/70 pt-5">
                 <Button
                   render={<a href="/dashboard" />}
                   nativeButton={false}
@@ -47,10 +48,7 @@ export default function Home() {
                 >
                   Explore Fire Activity <ArrowRight className="size-4 transition-transform group-hover/button:translate-x-1" />
                 </Button>
-                <div className="flex flex-wrap items-center gap-x-5 gap-y-2 font-mono text-[10px] uppercase tracking-[0.04em] text-ink-muted">
-                  <span className="flex items-center gap-1.5"><Satellite className="size-4 text-orange" />TERRA · AQUA · S-NPP · NOAA-20</span>
-                  <span className="hidden items-center gap-1.5 sm:flex"><Waypoints className="size-4 text-amber" />24-YR TIME-SERIES</span>
-                </div>
+                <SubscribeDialog />
               </div>
               <svg aria-hidden="true" className="pointer-events-none absolute -bottom-12 -right-12 size-64 text-orange-soft/40" fill="none" viewBox="0 0 200 200">
                 <circle cx="100" cy="100" r="40" stroke="currentColor" strokeDasharray="2 4" strokeWidth="1.2" />
