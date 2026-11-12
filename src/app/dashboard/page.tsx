@@ -94,7 +94,7 @@ export default function DashboardPage() {
             <h1>Active Fire Dashboard</h1>
             <p>Compare illustrative MODIS and VIIRS detections for a fixed California area of interest.</p>
           </div>
-          <div className="data-stamp"><span>SYNTHETIC DEMONSTRATION</span><strong>STATIC DEMO DATA</strong><b>NOT LIVE</b><small>{fullYearSelected ? "Selected period: full year 2025" : `Selected period: ${periodLabel}`}</small></div>
+          <div className="data-stamp"><span>SELECTED PERIOD</span><strong>{fullYearSelected ? "Full year 2025" : periodLabel}</strong></div>
         </section>
 
         <section className="control-bar" aria-label="Dashboard controls">
@@ -128,7 +128,7 @@ export default function DashboardPage() {
 
         </section>
 
-        <section className="panel calendar-panel"><div className="panel-heading calendar-heading"><div><span className="section-kicker">ANNUAL BURNING ACTIVITY</span><h2>Daily pattern — 2025</h2><p>Select a date. Days without sample records are shown as zero or missing.</p></div><span className="calendar-unit"><Activity />ILLUSTRATIVE SERIES</span></div><CalendarHeatmap selectedDate={selectedDate} filters={filters} view={view} onSelect={chooseDate} /><div className="calendar-foot"><span>365 DAYS · STATIC DEMO DATA</span><span>{matchingObservations.length} mapped records in selected range</span></div></section>
+        <section className="panel calendar-panel"><div className="panel-heading calendar-heading"><div><span className="section-kicker">ANNUAL BURNING ACTIVITY</span><h2>Daily pattern — 2025</h2><p>Select a date. Days without sample records are shown as zero or missing.</p></div><span className="calendar-unit"><Activity />ILLUSTRATIVE SERIES</span></div><CalendarHeatmap selectedDate={selectedDate} filters={filters} view={view} onSelect={chooseDate} /><div className="calendar-foot"><span>DAILY ACTIVITY SUMMARY</span><span>{matchingObservations.length} mapped records in selected range</span></div></section>
 
 
         

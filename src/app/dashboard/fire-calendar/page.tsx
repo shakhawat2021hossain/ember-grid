@@ -35,7 +35,7 @@ export default function FireCalendarPage() {
             <h1>Fire Calendar</h1>
             <p>Explore daily fire activity by year and compare monthly patterns across the full demo history.</p>
           </div>
-          <div className="data-stamp"><span>ILLUSTRATIVE SERIES</span><strong>STATIC DEMO DATA</strong><b>NOT LIVE</b><small>Available years: 2020–2025</small></div>
+          <div className="data-stamp"><span>AVAILABLE YEARS</span><strong>2020–2025</strong></div>
         </section>
 
         <section className="metrics-row" aria-label={`${year} activity summary`}>

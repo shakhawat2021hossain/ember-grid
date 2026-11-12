@@ -65,7 +65,7 @@ export default function ReportsPage() {
           <fieldset className="report-satellite"><legend>SENSOR</legend><div className="segmented-control">{(["All", "MODIS", "VIIRS"] as const).map((option) => <button key={option} aria-pressed={sensor === option} className={sensor === option ? "segment-active" : ""} onClick={() => setSensor(option)}>{option}</button>)}</div></fieldset>
           <label className="filter-select"><span>CONFIDENCE</span><select value={confidence} onChange={(event) => setConfidence(event.target.value as Confidence)}><option>All</option><option>High</option><option>Nominal</option><option>Low</option></select><ChevronDown /></label>
         </section>
-        <div className="report-data-note"><CalendarDays /><span>Reporting period: <strong>{periodLabel}</strong> · Static synthetic observations · Not live data</span></div>
+        <div className="report-data-note"><CalendarDays /><span>Reporting period: <strong>{periodLabel}</strong> · Illustrative sample observations</span></div>
 
         <section className="report-metrics" aria-label="Report summary">
           <article className="report-metric"><span>FILTERED RECORDS <Info /></span><strong>{records.length}</strong><small>Observation records</small></article>

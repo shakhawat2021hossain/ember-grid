@@ -74,7 +74,7 @@ export default function ResponderBrief({
           <div><dt>Dominant sensor</dt><dd>{dominantSensor}</dd></div>
           <div><dt>Confidence</dt><dd>{confidence}</dd></div>
         </dl>
-        <div className="brief-attribution"><strong>NASA Earth Observation Data</strong><span>MODIS Active Fire · VIIRS 375m Active Fire</span><small>Product names identify intended sources; this brief uses illustrative static values, not live NASA data.</small></div>
+        <div className="brief-attribution"><strong>NASA Earth Observation Data</strong><span>MODIS Active Fire · VIIRS 375m Active Fire</span><small>Product names identify intended sources; this brief uses illustrative sample values, not validated NASA measurements.</small></div>
         <div className="brief-actions">
           <button type="button" onClick={() => window.print()}><Printer />Export PDF</button>
           <button type="button" onClick={shareBrief}><ClipboardCopy />Share</button>

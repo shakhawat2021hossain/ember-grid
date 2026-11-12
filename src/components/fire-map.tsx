@@ -120,7 +120,7 @@ export default function FireMap({
           );
         })}
       </MapContainer>
-      <div className="map-attribution-label">STATIC OBSERVATIONS · NOT LIVE</div>
+      <div className="map-attribution-label">SAMPLE OBSERVATIONS</div>
     </div>
   );
 }

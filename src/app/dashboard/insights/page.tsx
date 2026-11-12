@@ -34,7 +34,7 @@ export default function FireInsightsPage() {
       <div className="dashboard-content">
         <section className="dashboard-intro insights-intro">
           <div><div className="eyebrow"><span>FIRE ANALYSIS</span><span className="eyebrow-divider" />CALIFORNIA, USA</div><h1>Fire Insights &amp; Alerts</h1><p>Focused comparison of illustrative MODIS, VIIRS, seasonal, and anomaly signals.</p></div>
-          <div className="data-stamp"><span>ILLUSTRATIVE PROTOTYPE</span><strong>STATIC DEMO DATA</strong><b>NOT LIVE</b><small>Selected: {selected.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</small></div>
+          <div className="data-stamp"><span>SELECTED DATE</span><strong>{selected.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</strong></div>
         </section>
 
         <section className="control-bar insights-controls" aria-label="Insights filters">

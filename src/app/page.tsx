@@ -1,4 +1,5 @@
 import { ArrowRight, CalendarDays, SlidersHorizontal, Timer } from "lucide-react";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import SubscribeDialog from "@/components/subscribe-dialog";
 
@@ -11,13 +12,23 @@ export default function Home() {
             <span className="size-2 rounded-full bg-orange transition-transform duration-200 group-hover:scale-125" />
             Ember Grid
           </a>
-          <Button
-            render={<a href="/dashboard" />}
-            nativeButton={false}
-            className="h-9 rounded-sm bg-orange px-4 font-mono text-[11px] font-medium uppercase tracking-[0.08em] text-white shadow-sm hover:bg-orange-deep"
-          >
-            Dashboard <ArrowRight className="size-3.5" />
-          </Button>
+          <nav className="flex items-center gap-3 md:gap-5" aria-label="Main navigation">
+            <Link
+              href="/methods"
+              aria-label="Methods & Provenance"
+              className="whitespace-nowrap text-xs font-medium text-ink-muted transition-colors hover:text-orange-deep md:text-sm"
+            >
+              <span className="md:hidden">Methods</span>
+              <span className="hidden md:inline">Methods &amp; Provenance</span>
+            </Link>
+            <Button
+              render={<a href="/dashboard" />}
+              nativeButton={false}
+              className="h-9 rounded-sm bg-orange px-4 font-mono text-[11px] font-medium uppercase tracking-[0.08em] text-white shadow-sm hover:bg-orange-deep"
+            >
+              Dashboard <ArrowRight className="size-3.5" />
+            </Button>
+          </nav>
         </div>
       </header>
 

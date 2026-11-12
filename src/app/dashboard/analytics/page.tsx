@@ -108,7 +108,7 @@ export default function AnalyticsPage() {
             <h1>Analytics</h1>
             <p>Current activity risk and historical monthly and seasonal patterns for the California, USA area of interest.</p>
           </div>
-          <div className="data-stamp"><span>ILLUSTRATIVE SERIES</span><strong>STATIC DEMO DATA</strong><b>NOT LIVE</b><small>Historical series: 2020–2025</small></div>
+          <div className="data-stamp"><span>HISTORICAL SERIES</span><strong>2020–2025</strong></div>
         </section>
 
         <section className="control-bar analytics-controls" aria-label="Analytics filters">
@@ -147,7 +147,7 @@ export default function AnalyticsPage() {
               <article><span>ACTIVITY BASELINE</span><strong>{dailyBaseline ? `${Math.round(dailyBaseline.activity)} / 100` : "—"}</strong><small>Same calendar day in prior years</small></article>
             </div>
           </div>
-          <p className="analytics-note"><Info aria-hidden="true" />Risk bands: Very Low 0–19 · Low 20–39 · Moderate 40–59 · High 60–79 · Very High 80–100. Sample FRP and observation counts are illustrative, not live satellite measurements.</p>
+          <p className="analytics-note"><Info aria-hidden="true" />Risk bands: Very Low 0–19 · Low 20–39 · Moderate 40–59 · High 60–79 · Very High 80–100. Sample FRP and observation counts are illustrative, not validated satellite measurements.</p>
         </section>
 
         <section className="panel analytics-month-panel" aria-labelledby="analytics-month-heading">
