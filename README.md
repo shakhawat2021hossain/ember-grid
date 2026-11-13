@@ -69,6 +69,21 @@ The platform provides Raw and Harmonized data views so users can explore source 
 
 Satellite active fire detections are hotspot observations. They should not automatically be interpreted as confirmed wildfire boundaries or verified emergency incidents. Data availability, sensor characteristics, processing assumptions, and uncertainty should be considered when interpreting results.
 
+
+## AI Tools & Assistance Acknowledgement
+
+AI-powered tools were used to assist various aspects of Ember Grid's development, research, documentation, and multimedia production.
+
+| AI Tool | Purpose |
+|---|---|
+| **ChatGPT (OpenAI)** | Project planning, brainstorming, documentation, and development assistance |
+| **Claude (Anthropic)** | Research assistance, content refinement, and video editing and motion graphics support |
+| **Google Antigravity** | AI-assisted web development and implementation |
+| **GitHub Copilot** | Code suggestions, development assistance, and debugging |
+
+AI-generated suggestions and outputs were reviewed, modified, and integrated by the team. The team takes responsibility for the final implementation, project decisions, and results.
+
+
 ## Acknowledgement
 
 Developed as part of the **NASA Space Apps Challenge 2026**, in response to the challenge **"Harmonization of MODIS and VIIRS Hot Spots."**
