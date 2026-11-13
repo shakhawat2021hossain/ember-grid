@@ -106,6 +106,15 @@ const references = [
   },
 ];
 
+const contributors = [
+  { name: "A M Saadnan Tahsin", role: "Team Leader" },
+  { name: "Shakhawat Hossain", role: "Web Developer" },
+  { name: "Mst Rajia Akter Mitu", role: "Researcher" },
+  { name: "S M Sajjad Hossain Shimanoto", role: "Data Analyst" },
+  { name: "Habibur Rahman", role: "Video Editor" },
+  { name: "Mohine Rana", role: "Science Strategist" },
+];
+
 function WorkflowDiagram() {
   return (
     <div className="overflow-x-auto rounded-md border border-[#e7e5dc] bg-white p-4 sm:p-6">
@@ -271,6 +280,7 @@ export default function MethodsPage() {
             ["anomaly", "Anomaly detection"],
             ["validation", "Validation & limits"],
             ["references", "References"],
+            ["contributors", "Contributors"],
           ].map(([id, label]) => (
             <a
               className="underline decoration-[#d9c6b8] underline-offset-4 hover:text-[#873716]"
@@ -714,6 +724,40 @@ export default function MethodsPage() {
             product and processing stream; refer to the current NASA product
             documentation for operational details.
           </p>
+        </section>
+
+        <section
+          aria-labelledby="contributors-title"
+          className="mt-14"
+          id="contributors"
+        >
+          <SectionHeading
+            eyebrow="07 / PROJECT TEAM"
+            id="contributors-title"
+            title="Contributors"
+          >
+            The people behind this project.
+          </SectionHeading>
+          <ol className="mt-6 grid gap-x-8 sm:grid-cols-2 lg:grid-cols-3">
+            {contributors.map((contributor, index) => (
+              <li
+                className="flex min-w-0 items-start gap-4 border-t border-[#e7e5dc] py-4"
+                key={contributor.name}
+              >
+                <span className="pt-0.5 font-mono text-[10px] text-[#9b4a28]">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+                <div className="min-w-0">
+                  <h3 className="m-0 break-words text-sm font-semibold text-[#292c27]">
+                    {contributor.name}
+                  </h3>
+                  <p className="mb-0 mt-1 text-xs text-[#74796f]">
+                    {contributor.role}
+                  </p>
+                </div>
+              </li>
+            ))}
+          </ol>
         </section>
 
         <footer className="mt-14 flex flex-wrap items-center justify-between gap-3 border-t border-[#e1dfd7] pt-5 text-[10px] text-[#74796f]">
